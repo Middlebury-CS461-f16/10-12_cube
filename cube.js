@@ -149,29 +149,19 @@ window.onload = function(){
 
   gl.clearColor(0,0,0,1);
 
-  let angle = 0;
   let last;
+  let transform = mat4.create();
 
   let render = (now)=> {
-
-    var c = Math.cos(angle);
-    var s = Math.sin(angle);
-
-    var rotation = new Float32Array([
-      c,0, s, 0,
-      0, 1, 0, 0,
-      -s, 0, c, 0,
-      0, 0, 0, 1
-    ]);
 
     // find the new angle based on the elapsed time
     if (now && last){
       var elapsed = now -last;
-      angle += (Math.PI/2) * elapsed/1000;
-      angle = angle > 2 * Math.PI ? angle - Math.PI *2 : angle;
+      mat4.rotateY(transform, transform, (Math.PI/2) * elapsed/1000);
     }
     last = now;
-    gl.uniformMatrix4fv(u_Model, false, rotation);
+    
+    gl.uniformMatrix4fv(u_Model, false, transform);
 
     // clear the canvas
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
